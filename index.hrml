@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Little Universe ✦</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #0b0b12;
+  --card: rgba(255,255,255,.045);
+  --line: rgba(255,255,255,.09);
+  --purple: #bda2ff;
+  --muted: #9290a5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 20px;
+  background: var(--bg);
+  color: #f8f6ff;
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background glow */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: .18;
+  pointer-events: none;
+  z-index: 0;
+  animation: float 9s ease-in-out infinite alternate;
+}
+
+body::before {
+  background: #7047d7;
+  top: -120px;
+  left: -130px;
+}
+
+body::after {
+  background: #325d8d;
+  right: -150px;
+  bottom: -130px;
+  animation-delay: -4s;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 430px;
+  animation: appear .8s ease both;
+}
+
+/* Profile */
+.profile {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.avatar {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 22px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(189,162,255,.35);
+  border-radius: 26px;
+  background: linear-gradient(
+    145deg,
+    rgba(189,162,255,.17),
+    rgba(255,255,255,.025)
+  );
+  box-shadow: 0 0 45px rgba(153,113,255,.1);
+  font-size: 30px;
+  color: var(--purple);
+  transform: rotate(-6deg);
+  transition: .4s ease;
+}
+
+.avatar:hover {
+  transform: rotate(6deg) scale(1.08);
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 8vw, 42px);
+  font-weight: 600;
+  letter-spacing: -1.5px;
+  margin: 0 0 10px;
+}
+
+h1 span {
+  color: var(--purple);
+  font-style: italic;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: .2px;
+}
+
+/* Link list */
+.links {
+  display: grid;
+  gap: 12px;
+}
+
+.link-card {
+  --accent: #bda2ff;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 19px;
+  color: inherit;
+  text-decoration: none;
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  transition:
+    transform .3s cubic-bezier(.2,.8,.2,1),
+    border-color .3s ease,
+    background .3s ease,
+    box-shadow .3s ease;
+
+  animation: slideUp .6s both;
+  animation-delay: calc(var(--i) * 90ms);
+}
+
+/* Shine effect */
+.link-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(255,255,255,.08) 48%,
+    transparent 75%
+  );
+  transform: translateX(-130%);
+  transition: transform .7s ease;
+}
+
+.link-card:hover {
+  transform: translateY(-4px) scale(1.015);
+  border-color: var(--accent);
+  background: rgba(255,255,255,.065);
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.22),
+    0 0 25px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.link-card:hover::before {
+  transform: translateX(130%);
+}
+
+.link-card:active {
+  transform: scale(.975);
+}
+
+/* SAME ICON FOR ALL BUTTONS */
+.icon-box {
+  width: 47px;
+  height: 47px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 11%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.icon-box svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .3s ease;
+}
+
+.link-card:hover .icon-box svg {
+  transform: scale(1.15) rotate(-8deg);
+}
+
+/* Text */
+.link-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.link-desc {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* Arrow */
+.arrow {
+  color: #77758c;
+  font-size: 21px;
+  transition: .3s ease;
+}
+
+.link-card:hover .arrow {
+  color: var(--accent);
+  transform: translate(3px, -3px);
+}
+
+/* Footer */
+.footer {
+  margin-top: 30px;
+  text-align: center;
+  color: #686679;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.footer span {
+  color: #d6b4f9;
+}
+
+/* Animations */
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(40px, 35px);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+<main class="container">
+
+  <header class="profile">
+    <div class="avatar">✦</div>
+    <h1>little <span>universe.</span></h1>
+    <p class="subtitle">
+      a little space on the internet ✧
+    </p>
+  </header>
+
+  <nav class="links" aria-label="My links">
+
+    <!-- LINK 1 -->
+    <a class="link-card"
+       style="--i:1;--accent:#bda2ff"
+       href="https://pastebin.com/u/afkararsyad"
+       target="_blank"
+       rel="noopener noreferrer">
+
+      <div class="icon-box">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/>
+          <path d="M19 14l1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14z"/>
+        </svg>
+      </div>
+
+      <div class="link-info">
+        <div class="link-title">Pastebin</div>
+        <div class="link-desc">Link penting</div>
+      </div>
+
+      <span class="arrow">↗</span>
+    </a>
+
+    <!-- LINK 2 -->
+    <a class="link-card"
+       style="--i:2;--accent:#a3d9c9"
+       href="https://pastebin.com/H2m28R7q"
+       target="_blank"
+       rel="noopener noreferrer">
+
+      <div class="icon-box">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/>
+          <path d="M19 14l1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14z"/>
+        </svg>
+      </div>
+
+      <div class="link-info">
+        <div class="link-title">Nomer WA</div>
+        <div class="link-desc">Nomer Penting</div>
+      </div>
+
+      <span class="arrow">↗</span>
+    </a>
+
+    <!-- LINK 3 -->
+    <a class="link-card"
+       style="--i:3;--accent:#f2b6ce"
+       href="https://pixeldrain.com/u/5PnNWdQ6"
+       target="_blank"
+       rel="noopener noreferrer">
+
+      <div class="icon-box">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/>
+          <path d="M19 14l1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14z"/>
+        </svg>
+      </div>
+
+      <div class="link-info">
+        <div class="link-title">PDF Annasihat</div>
+        <div class="link-desc">Untuk cetak</div>
+      </div>
+
+      <span class="arrow">↗</span>
+    </a>
+
+    <!-- LINK 4 -->
+    <a class="link-card"
+       style="--i:4;--accent:#f2d49b"
+       href="https://pixeldrain.com/u/NjeXXW3U"
+       target="_blank"
+       rel="noopener noreferrer">
+
+      <div class="icon-box">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/>
+          <path d="M19 14l1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14z"/>
+        </svg>
+      </div>
+
+      <div class="link-info">
+        <div class="link-title">PDF Jangan sampai tersesat</div>
+        <div class="link-desc">Untuk cetak</div>
+      </div>
+
+      <span class="arrow">↗</span>
+    </a>
+
+    <!-- LINK 5 -->
+    <a class="link-card"
+       style="--i:5;--accent:#a8c7fa"
+       href="https://github"
+       target="_blank"
+       rel="noopener noreferrer">
+
+      <div class="icon-box">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/>
+          <path d="M19 14l1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14z"/>
+        </svg>
+      </div>
+
+      <div class="link-info">
+        <div class="link-title">Proses</div>
+        <div class="link-desc">proses</div>
+      </div>
+
+      <span class="arrow">↗</span>
+    </a>
+
+  </nav>
+
+  <footer class="footer">
+    Be smart <span></span> · Dude
+  </footer>
+
+</main>
+</body>
+</html>
+```
